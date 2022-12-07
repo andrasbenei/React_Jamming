@@ -7,7 +7,7 @@ class PlaylistList extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            Playlists : []
+            Playlists : [{}, {}]
         }
     }
 
@@ -21,7 +21,6 @@ class PlaylistList extends React.Component {
         return (
             <div className="PlaylistList">
                 <h2>Playlists</h2>
-                {/* <PlaylistListItem Playlists={this.state.Playlists}/> */}
                 {
                     this.state.Playlists.map(playlist => {
                         return <PlaylistListItem playlist={playlist}/>

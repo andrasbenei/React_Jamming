@@ -82,7 +82,7 @@ const Spotify = {
         }).then(response => response.json()
         ).then(jsonResponse => {
             const playlistId = jsonResponse.id;
-            return fetch(`/v1/users/${userId}/playlists/${playlistId}/tracks`, {
+            return fetch(`https://api.spotify.com/v1/users/${userId}/playlists/${playlistId}/tracks`, {
                 headers: headers,
                 method: 'POST',
                 body: JSON.stringify({ uris: trackURIs })
@@ -91,9 +91,10 @@ const Spotify = {
     },
 
     getUserPlaylists() {
-        const userId = Spotify.getCurrentUserId();
         const accessToken = Spotify.getAccessToken();
         const headers = { Authorization: `Bearer ${accessToken}`};
+        const userId = Spotify.getCurrentUserId();
+
 
         return fetch(`https://api.spotify.com/v1/users/${userId}/playlists`, {
             headers: headers,
@@ -106,6 +107,30 @@ const Spotify = {
             return jsonResponse.items.map(item => ({
                 id: item.id,
                 name: item.name
+            }))
+        })
+    },
+
+    getPlaylist(id) {
+        const userId = Spotify.getCurrentUserId();
+        const accessToken = Spotify.getAccessToken();
+        const headers = { Authorization: `Bearer ${accessToken}`};
+        const playlistId = id;
+        
+        return fetch(`https://api.spotify.com/v1/users/${userId}/playlists/${playlistId}/tracks`, {
+            headers: headers
+        }).then(response => {
+            return response.json();
+        }).then(jsonResponse => {
+            if (!jsonResponse.items) {
+                return [];
+            }
+            return jsonResponse.items.map(item => ({
+                id: item.track.id,
+                name: item.track.name,
+                artist: item.track.artists[0].name,
+                album: item.track.album.name,
+                uri: item.track.uri
             }))
         })
     }

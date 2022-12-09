@@ -65,28 +65,38 @@ const Spotify = {
         })
     },
 
-    savePlayList(name, trackURIs) {
+    async savePlayList(name, trackURIs, playlistId) {
         if (!name || !trackURIs.length) {
             return;
         }
 
-        const accessToken = Spotify.getAccessToken();
+        const accessToken = await Spotify.getAccessToken();
         const headers = { Authorization: `Bearer ${accessToken}`};
-        const userId = Spotify.getCurrentUserId();
+        const userId = await Spotify.getCurrentUserId();
 
-
-        return fetch(`https://api.spotify.com/v1/users/${userId}/playlists`, {
-            headers: headers,
-            method: 'POST',
-            body: JSON.stringify({ name: name })
-        }).then(response => response.json()
-        ).then(jsonResponse => {
-            const playlistId = jsonResponse.id;
-            return fetch(`https://api.spotify.com/v1/users/${userId}/playlists/${playlistId}/tracks`, {
+        if (playlistId) {
+            const url = `https://api.spotify.com/v1/users/${userId}/playlists/${playlistId}`;
+            await fetch (url, {
+                headers: headers,
+                method: 'PUT',
+                body: JSON.stringify({name: name})
+            });
+        } else {
+            const url = `https://api.spotify.com/v1/users/${userId}/playlists`;
+            const response = await fetch (url, {
                 headers: headers,
                 method: 'POST',
-                body: JSON.stringify({ uris: trackURIs })
-            })
+                body: JSON.stringify({name: name})
+            });
+            const jsonResponse = await response.json();
+            playlistId = jsonResponse.id
+        }
+
+        const url = `https://api.spotify.com/v1/users/${userId}/playlists/${playlistId}/tracks`;
+        await fetch (url, {
+            headers: headers,
+            method: 'PUT',
+            body: JSON.stringify({ uris: trackURIs})
         })
     },
 

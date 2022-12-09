@@ -6,12 +6,12 @@ let userId;
 
 const Spotify = {
 
-    getCurrentUserId() {
+    async getCurrentUserId() {
         if (userId) {
             return userId;
         }
 
-        const accessToken = Spotify.getAccessToken();
+        const accessToken = await Spotify.getAccessToken();
         const headers = { Authorization: `Bearer ${accessToken}`};
 
         return fetch('https://api.spotify.com/v1/me', {
@@ -45,8 +45,9 @@ const Spotify = {
         
     },
 
-    search(term) {
-        const accessToken = Spotify.getAccessToken();
+    async search(term) {
+        const accessToken = await Spotify.getAccessToken();
+
         return fetch(`https://api.spotify.com/v1/search?type=track&q=${term}`, {
             headers: { Authorization: `Bearer ${accessToken}`}
         }).then(response => {
@@ -121,9 +122,9 @@ const Spotify = {
         })
     },
 
-    getPlaylist(id) {
-        const userId = Spotify.getCurrentUserId();
-        const accessToken = Spotify.getAccessToken();
+    async getPlaylist(id) {
+        const userId = await Spotify.getCurrentUserId();
+        const accessToken = await Spotify.getAccessToken();
         const headers = { Authorization: `Bearer ${accessToken}`};
         const playlistId = id;
         

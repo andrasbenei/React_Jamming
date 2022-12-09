@@ -90,10 +90,10 @@ const Spotify = {
         })
     },
 
-    getUserPlaylists() {
-        const accessToken = Spotify.getAccessToken();
+    async getUserPlaylists() {
+        const accessToken = await Spotify.getAccessToken();
         const headers = { Authorization: `Bearer ${accessToken}`};
-        const userId = Spotify.getCurrentUserId();
+        const userId = await Spotify.getCurrentUserId();
 
 
         return fetch(`https://api.spotify.com/v1/users/${userId}/playlists`, {

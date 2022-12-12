@@ -1,28 +1,15 @@
 import React from "react";
 import './PlaylistList.css';
-import Spotify from "../../util/Spotify";
 import PlaylistListItem from "../PlaylistListItem/PlaylistListItem";
 
 class PlaylistList extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            Playlists : []
-        }
-    }
-
-    componentDidMount() {
-        Spotify.getUserPlaylists().then(Playlists => {
-            this.setState({Playlists: Playlists})
-        })
-    }
 
     render() {
         return (
             <div className="PlaylistList">
-                <h2>Playlists</h2>
+                <h2>Your playlists</h2>
                 {
-                    this.state.Playlists.map(playlist => {
+                    this.props.Playlists.map(playlist => {
                         return <PlaylistListItem playlist={playlist}
                         onselectPlaylist={this.props.onselectPlaylist}/>
                     })

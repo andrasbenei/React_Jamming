@@ -16,9 +16,8 @@ class PlaylistListItem extends React.Component {
         return (
             <div className="PlaylistListItem">
                 <div className="PlaylistListItem-information">
-                    <h3>{this.props.playlist.name}</h3>
+                    <button className="PlaylistListItem-action" onClick={this.selectPlaylist}>{this.props.playlist.name}</button>
                 </div>
-                <button className="PlaylistListItem-action" onClick={this.selectPlaylist}>+</button>
             </div>
         )
     }

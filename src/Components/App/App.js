@@ -14,9 +14,10 @@ class App extends React.Component {
 
     this.state = {
       searchResults : [],
-      playlistName : 'My Playlist',
+      playlistName : 'My New Playlist',
       playlistTracks: [],
-      playlistId : null
+      playlistId : null,
+      Playlists : []
     }
 
     this.addTrack = this.addTrack.bind(this);
@@ -25,6 +26,8 @@ class App extends React.Component {
     this.savePlaylist = this.savePlaylist.bind(this);
     this.search = this.search.bind(this);
     this.selectPlaylist = this.selectPlaylist.bind(this);
+    this.deletePlaylist = this.deletePlaylist.bind(this);
+    this.updatePlaylists = this.updatePlaylists.bind(this);
   }
 
   addTrack(track) {
@@ -48,15 +51,16 @@ class App extends React.Component {
     this.setState({ playlistName : newName });
   }
 
-  savePlaylist() {
-    const trackURIs = this.state.playlistTracks.map(track => track.uri);
-    Spotify.savePlayList(this.state.playlistName, trackURIs, this.state.playlistId).then(() => {
+  async savePlaylist() {
+    const trackURIs = await this.state.playlistTracks.map(track => track.uri);
+    await Spotify.savePlayList(this.state.playlistName, trackURIs, this.state.playlistId).then(() => {
       this.setState({
-        playlistName: 'New Playlist',
+        playlistName: 'My New Playlist',
         playlistTracks: [],
         playlistId: null
       })
     })
+    await this.updatePlaylists();
   }
 
   search(term) {
@@ -73,6 +77,26 @@ class App extends React.Component {
     })
   }
 
+  async deletePlaylist() {
+    await Spotify.deletePlaylist(this.state.playlistId);
+    await this.updatePlaylists();
+    this.setState({
+      playlistName: 'My New Playlist',
+      playlistTracks: [],
+      playlistId: null
+    })
+  }
+
+  async updatePlaylists() {
+    await Spotify.getUserPlaylists().then(Playlists => {
+      this.setState({Playlists: Playlists})
+    }) 
+  }
+
+  componentDidMount() {
+    this.updatePlaylists();
+  }
+
   render() {
     return (
       <div>
@@ -85,8 +109,11 @@ class App extends React.Component {
               playlistTracks={this.state.playlistTracks}
               onRemove={this.removeTrack}
               onNameChange={this.updatePlaylistName}
-              onSave={this.savePlaylist}/>
-            <PlaylistList onselectPlaylist={this.selectPlaylist}/>
+              onSave={this.savePlaylist}
+              ondeletePlaylist={this.deletePlaylist}/>
+            <PlaylistList onselectPlaylist={this.selectPlaylist}
+              onupdatePlaylists={this.updatePlaylists}
+              Playlists={this.state.Playlists}/>
           </div>
         </div>
       </div>

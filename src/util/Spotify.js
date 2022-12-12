@@ -122,11 +122,11 @@ const Spotify = {
         })
     },
 
-    async getPlaylist(id) {
+    async getPlaylist(playlistId) {
         const userId = await Spotify.getCurrentUserId();
         const accessToken = await Spotify.getAccessToken();
         const headers = { Authorization: `Bearer ${accessToken}`};
-        const playlistId = id;
+
         
         return fetch(`https://api.spotify.com/v1/users/${userId}/playlists/${playlistId}/tracks`, {
             headers: headers
@@ -143,6 +143,26 @@ const Spotify = {
                 album: item.track.album.name,
                 uri: item.track.uri
             }))
+        })
+    },
+
+    async deletePlaylist(playlistId) {
+        if (!playlistId) {
+            return;
+        }
+
+        const accessToken = await Spotify.getAccessToken();
+        const headers = { Authorization: `Bearer ${accessToken}`};
+        const userId = await Spotify.getCurrentUserId();
+
+        const url = `https://api.spotify.com/v1/users/${userId}/playlists/${playlistId}/followers`
+        await fetch (url, {
+            headers: headers,
+            method: 'DELETE',
+        }).then(response => {
+            return response.json()
+        }).then(jsonResponse => {
+            alert(jsonResponse)
         })
     }
 };

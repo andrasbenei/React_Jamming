@@ -159,10 +159,6 @@ const Spotify = {
         await fetch (url, {
             headers: headers,
             method: 'DELETE',
-        }).then(response => {
-            return response.json()
-        }).then(jsonResponse => {
-            alert(jsonResponse)
         })
     }
 };

@@ -11,9 +11,13 @@ class PlaylistList extends React.Component {
                 {
                     this.props.Playlists.map(playlist => {
                         return <PlaylistListItem playlist={playlist}
-                        onselectPlaylist={this.props.onselectPlaylist}/>
+                        onselectPlaylist={this.props.onselectPlaylist}
+                        key={playlist.id}/>
                     })
                 }
+                <div className="CreateNewPlaylist">
+                    <button className="Create-playlist" onClick={this.props.oncreateNewPlaylist}>CREATE NEW LIST</button>
+                </div>
             </div>
         )
     }

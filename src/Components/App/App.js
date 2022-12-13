@@ -28,6 +28,8 @@ class App extends React.Component {
     this.selectPlaylist = this.selectPlaylist.bind(this);
     this.deletePlaylist = this.deletePlaylist.bind(this);
     this.updatePlaylists = this.updatePlaylists.bind(this);
+    this.createNewPlaylist = this.createNewPlaylist.bind(this);
+    this.updatePlaylistName = this.updatePlaylistName.bind(this);
   }
 
   addTrack(track) {
@@ -52,14 +54,9 @@ class App extends React.Component {
   }
 
   async savePlaylist() {
-    const trackURIs = await this.state.playlistTracks.map(track => track.uri);
-    await Spotify.savePlayList(this.state.playlistName, trackURIs, this.state.playlistId).then(() => {
-      this.setState({
-        playlistName: 'My New Playlist',
-        playlistTracks: [],
-        playlistId: null
-      })
-    })
+    const trackURIs = this.state.playlistTracks.map(track => track.uri);
+    await Spotify.savePlayList(this.state.playlistName, trackURIs, this.state.playlistId)
+    this.createNewPlaylist();
     await this.updatePlaylists();
   }
 
@@ -80,17 +77,21 @@ class App extends React.Component {
   async deletePlaylist() {
     await Spotify.deletePlaylist(this.state.playlistId);
     await this.updatePlaylists();
-    this.setState({
-      playlistName: 'My New Playlist',
-      playlistTracks: [],
-      playlistId: null
-    })
+    this.createNewPlaylist();
   }
 
   async updatePlaylists() {
     await Spotify.getUserPlaylists().then(Playlists => {
       this.setState({Playlists: Playlists})
     }) 
+  }
+
+  createNewPlaylist() {
+    this.setState({
+      playlistName: 'My New Playlist',
+      playlistTracks: [],
+      playlistId: null
+    })
   }
 
   componentDidMount() {
@@ -113,7 +114,8 @@ class App extends React.Component {
               ondeletePlaylist={this.deletePlaylist}/>
             <PlaylistList onselectPlaylist={this.selectPlaylist}
               onupdatePlaylists={this.updatePlaylists}
-              Playlists={this.state.Playlists}/>
+              Playlists={this.state.Playlists}
+              oncreateNewPlaylist={this.createNewPlaylist}/>
           </div>
         </div>
       </div>
